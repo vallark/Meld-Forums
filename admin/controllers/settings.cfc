@@ -95,6 +95,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 		
 		<!--- return vars --->
 		<cfset rc.settingsBean	= settingsBean />
+		<cfset themeService.updateThemeList() />
+		
 		<cfset rc.aThemes		= themeService.getThemes( isActive=1 ) />
 
 		<cfset rc.qGroupsPublic		= qGroupsPublic />

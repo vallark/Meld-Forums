@@ -176,6 +176,47 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <!---^^GENERATEDEND^^--->
 <!---^^CUSTOMSTART^^--->
+
+	<cffunction name="updateThemeList" access="public" output="false" returntype="void">
+		
+		<cfset var themeBean = "" />
+		<cfset var themeName = "" />
+		<cfset var themeDir = expandPath("/MeldForums/themes") />
+		<cfset var qThemeList = ""/>
+		<cfset var aThemes = ArrayNew(1) />
+		<cfset var x = "" />
+		
+		<cfif not directoryExists( themeDir )>
+			<cfreturn />
+		</cfif>
+
+		 <cfset aThemes = getThemes( isActive=1 ) />
+
+		 <cfloop from="1" to="#ArrayLen(aThemes)#" index="x">
+			<cfset themeBean = aThemes[x] />
+			<cfif not directoryExists( themeDir & "/" & themeBean.getPackageName() ) and not themeBean.getIsMaster()>
+				<cfset deleteTheme( themeBean.getThemeID() ) />
+			</cfif>
+		 </cfloop>
+		
+		<cfdirectory action="list" directory="#themeDir#" name="qThemeList" type="dir">
+		
+		 <cfloop query="qThemeList">
+		 	 <cfif qThemeList.name neq "event">
+					<cfset themeBean = getBeanByAttributes( packagename=qThemeList.name ) />
+					<cfif not themeBean.getBeanExists()>
+						<cfset themeName = replace( qThemeList.name,"_"," ","all" ) />
+						<cfset themeName = rereplace( themeName,"\b(\S)(\S*)\b" , "\u\1\L\2" , "all" ) />
+						<cfset themeBean.setName( themeName ) />
+						<cfset themeBean.setPackageName( qThemeList.name ) />
+						<cfset saveTheme( themeBean ) />
+					</cfif>
+			  </cfif>
+		 </cfloop>
+	</cffunction>
+
+
+
 <!---^^CUSTOMEND^^--->
 </cfcomponent>
 
